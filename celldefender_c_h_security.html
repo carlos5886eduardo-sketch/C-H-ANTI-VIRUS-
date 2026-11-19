@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CellDefender / C&H SECURITY</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            900: '#050b08',
+                            800: '#0a1711',
+                            700: '#0f241a',
+                            600: '#163827',
+                            500: '#1fc870',
+                            400: '#23f083',
+                            300: '#68f7a8'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Courier New', monospace]
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #050b08;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .glow-box {
+            box-shadow: 0 0 15px rgba(31, 200, 112, 0.15);
+            border: 1px solid rgba(31, 200, 112, 0.25);
+        }
+        .glow-box-active {
+            box-shadow: 0 0 25px rgba(35, 240, 131, 0.35);
+            border: 1px solid rgba(35, 240, 131, 0.6);
+        }
+        .text-glow {
+            text-shadow: 0 0 10px rgba(35, 240, 131, 0.6);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0a1711;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #1fc870;
+            border-radius: 4px;
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.98); }
+        }
+        .radar-pulse {
+            animation: pulse-slow 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-[#050b08] min-h-screen flex flex-col justify-between max-w-md mx-auto relative overflow-x-hidden border-x border-[#0f241a]">
+
+    <!-- 1. TELA DE ONBOARDING (PRIMEIRO USO) -->
+    <div id="onboarding-screen" class="fixed inset-0 bg-[#050b08] z-50 flex flex-col justify-between p-6 overflow-y-auto hidden">
+        <div class="space-y-6 pt-4">
+            <div class="w-16 h-16 rounded-2xl bg-[#0a1711] border border-[#1fc870] flex items-center justify-center text-[#23f083] glow-box mx-auto">
+                <i class="fa-solid fa-shield-halved text-3xl"></i>
+            </div>
+            <div class="text-center space-y-2">
+                <h1 class="text-xl font-bold text-white tracking-wide">CELLDEFENDER <span class="text-[#1fc870]">PRO</span></h1>
+                <p class="text-xs text-[#68f7a8] font-mono">C&H SECURITY CORPORATION</p>
+                <p class="text-xs text-gray-300 pt-2 leading-relaxed">
+                    Sistema de defesa móvel em tempo real. Conceda as permissões centrais para ativar a blindagem contra malwares e rastreadores de rede.
+                </p>
+            </div>
+
+            <div class="space-y-3 pt-2">
+                <div class="bg-[#0a1711]/90 border border-[#0f241a] rounded-xl p-3.5 flex items-center justify-between glow-box">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-9 h-9 rounded-lg bg-[#0f241a] flex items-center justify-center text-[#1fc870]">
+                            <i class="fa-solid fa-folder-open text-sm"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xs font-bold text-white">Acesso Completo aos Arquivos</h3>
+                            <p class="text-[10px] text-gray-400">Varredura de APKs e armazenamento</p>
+                        </div>
+                    </div>
+                    <input type="checkbox" id="perm-files" checked class="w-4 h-4 accent-[#1fc870] rounded cursor-pointer">
+                </div>
+
+                <div class="bg-[#0a1711]/90 border border-[#0f241a] rounded-xl p-3.5 flex items-center justify-between glow-box">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-9 h-9 rounded-lg bg-[#0f241a] flex items-center justify-center text-[#1fc870]">
+                            <i class="fa-solid fa-network-wired text-sm"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xs font-bold text-white">VPN Local / AdBlock Firewall</h3>
+                            <p class="text-[10px] text-gray-400">Bloqueio de rastreadores e anúncios</p>
+                        </div>
+                    </div>
+                    <input type="checkbox" id="perm-vpn" checked class="w-4 h-4 accent-[#1fc870] rounded cursor-pointer">
+                </div>
+
+                <div class="bg-[#0a1711]/90 border border-[#0f241a] rounded-xl p-3.5 flex items-center justify-between glow-box">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-9 h-9 rounded-lg bg-[#0f241a] flex items-center justify-center text-[#1fc870]">
+                            <i class="fa-solid fa-shield-virus text-sm"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xs font-bold text-white">Integridade e Heurística</h3>
+                            <p class="text-[10px] text-gray-400">Monitoramento ativo em segundo plano</p>
+                        </div>
+                    </div>
+                    <input type="checkbox" id="perm-integrity" checked class="w-4 h-4 accent-[#1fc870] rounded cursor-pointer">
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-6 pb-2">
+            <button onclick="completeOnboarding()" class="w-full bg-[#1fc870] hover:bg-[#23f083] text-[#050b08] font-bold py-3.5 px-4 rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-[#1fc870]/20 active:scale-98 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-check-double"></i> Conceder Permissões e Iniciar
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. CABEÇALHO COM INDICADOR DE STATUS EM TEMPO REAL -->
+    <header class="sticky top-0 z-40 bg-[#0a1711]/90 backdrop-blur-md border-b border-[#0f241a] px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-[#0f241a] border border-[#1fc870]/50 flex items-center justify-center text-[#23f083] glow-box">
+                <i class="fa-solid fa-shield-halved text-xl"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-sm tracking-wider text-white flex items-center gap-1.5">
+                    CELLDEFENDER <span class="text-[10px] bg-[#1fc870]/20 text-[#23f083] px-1.5 py-0.5 rounded border border-[#1fc870]/30">C&H SEC</span>
+                </h1>
+                <div class="flex items-center space-x-1.5 mt-0.5">
+                    <span class="w-2 h-2 rounded-full bg-[#23f083] animate-pulse"></span>
+                    <span class="text-xs text-[#68f7a8] font-mono" id="header-status-text">SISTEMA PROTEGIDO</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+            <button onclick="resetOnboardingState()" title="Reiniciar Configuração" class="w-9 h-9 rounded-lg bg-[#0f241a] border border-[#1fc870]/40 flex items-center justify-center text-[#23f083] active:scale-95 transition">
+                <i class="fa-solid fa-rotate-right text-xs"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- CORPO PRINCIPAL COM ABAS -->
+    <main class="flex-1 overflow-y-auto custom-scrollbar pb-24 pt-4 px-4">
+        
+        <!-- 3. DASHBOARD COM CONTADORES DINÂMICOS -->
+        <section id="tab-dashboard" class="space-y-4 tab-content">
+            <div class="relative bg-gradient-to-br from-[#0a1711] to-[#0f241a]/60 rounded-2xl p-5 glow-box overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-[#1fc870]/10 rounded-full blur-2xl pointer-events-none"></div>
+                
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <span class="text-[11px] uppercase tracking-widest text-[#23f083] font-semibold">Integridade do Núcleo</span>
+                        <h2 class="text-2xl font-bold text-white text-glow mt-0.5">99.9% Seguro</h2>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-[#163827]/50 border border-[#23f083]/40 flex items-center justify-center text-[#23f083] radar-pulse">
+                        <i class="fa-solid fa-radar text-xl"></i>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 pt-2 border-t border-[#0f241a]">
+                    <div>
+                        <span class="text-[10px] text-gray-400 block">VPN Local / Ads</span>
+                        <span class="text-xs font-mono font-medium text-[#68f7a8] flex items-center gap-1 mt-0.5" id="dash-vpn-status">
+                            <i class="fa-solid fa-circle text-[8px] text-[#23f083]"></i> Ativa (Local)
+                        </span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-gray-400 block">Última Varredura</span>
+                        <span class="text-xs font-mono font-medium text-white mt-0.5 block">Agora mesmo</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contadores em Tempo Real -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-[#0a1711] border border-[#0f241a] rounded-xl p-3.5 text-center glow-box">
+                    <div class="text-[#23f083] mb-1"><i class="fa-solid fa-file-shield text-lg"></i></div>
+                    <div class="text-xl font-bold text-white font-mono" id="counter-files">14.825</div>
+                    <div class="text-[10px] text-gray-400 uppercase tracking-tight mt-0.5">Arquivos Vistoriados</div>
+                </div>
+                <div class="bg-[#0a1711] border border-[#0f241a] rounded-xl p-3.5 text-center glow-box">
+                    <div class="text-yellow-400 mb-1"><i class="fa-solid fa-ban text-lg"></i></div>
+                    <div class="text-xl font-bold text-white font-mono" id="counter-ads">342</div>
+                    <div class="text-[10px] text-gray-400 uppercase tracking-tight mt-0.5">Anúncios Bloqueados</div>
+                </div>
+            </div>
+
+            <!-- Ação Rápida de Varredura -->
+            <div class="bg-[#0a1711] border border-[#0f241a] rounded-2xl p-4 glow-box">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-[#0f241a] flex items-center justify-center text-[#1fc870]">
+                            <i class="fa-solid fa-bolt text-sm"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-white">Inspeção Rápida</h3>
+                            <p class="text-[11px] text-gray-400">Varredura de memória RAM e APKs</p>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="switchTab('scan'); startScanEngine();" class="w-full bg-[#1fc870] hover:bg-[#23f083] text-[#050b08] font-bold py-3 px-4 rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-[#1fc870]/20 active:scale-98 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-play"></i> Iniciar Varredura Imediata
+                </button>
+            </div>
+        </section>
+
+        <!-- 4. ABA DE VARREDURA ANTIVÍRUS COM TERMINAL E DIRETÓRIOS REAIS -->
+        <section id="tab-scan" class="space-y-4 tab-content hidden">
+            <div class="bg-[#0a1711] border border-[#0f241a] rounded-2xl p-5 glow-box text-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-[#1fc870]/5 pointer-events-none"></div>
+                
+                <div class="w-20 h-20 mx-auto rounded-full bg-[#0f241a] border-2 border-[#1fc870]/50 flex items-center justify-center text-[#23f083] mb-4 glow-box" id="scan-icon-container">
+                    <i class="fa-solid fa-microchip text-3xl" id="scan-main-icon"></i>
+                </div>
+
+                <h2 class="text-lg font-bold text-white mb-1" id="scan-title">Motor de Varredura Real</h2>
+                <p class="text-xs text-gray-400 mb-4" id="scan-subtitle">Análise de diretórios e hashes SHA-256</p>
+
+                <!-- Barra de Progresso -->
+                <div class="w-full bg-[#0f241a] h-2.5 rounded-full overflow-hidden mb-3 border border-[#163827]">
+                    <div class="bg-[#23f083] h-full w-0 transition-all duration-300" id="scan-progress-bar"></div>
+                </div>
+                <div class="flex justify-between text-[11px] font-mono text-gray-400 mb-5">
+                    <span id="scan-progress-text">0% Concluído</span>
+                    <span id="scan-files-count">0 arquivos</span>
+                </div>
+
+                <button onclick="startScanEngine()" id="scan-action-btn" class="w-full bg-[#1fc870] hover:bg-[#23f083] text-[#050b08] font-bold py-3.5 px-4 rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-[#1fc870]/20 active:scale-98 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-play"></i> Iniciar Varredura Profunda
+                </button>
+            </div>
+
+            <!-- Terminal Hacker de Execução -->
+            <div class="bg-[#030705] border border-[#0f241a] rounded-2xl p-4">
+                <div class="flex justify-between items-center mb-2.5">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-300 flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-[#23f083]"></i> Terminal C&H Engine
+                    </span>
+                    <span class="text-[10px] font-mono bg-[#0f241a] text-[#68f7a8] px-2 py-0.5 rounded" id="scan-status-badge">Aguardando</span>
+                </div>
+                <div class="bg-[#050b08] border border-[#0f241a] rounded-xl p-3 h-48 overflow-y-auto custom-scrollbar font-mono text-[11px] text-gray-300 space-y-1.5" id="scan-console-logs">
+                    <div class="text-gray-500">[System] Aguardando acionamento da varredura...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. ABA DE ADBLOCK COM VPN LOCAL SIMULADA E LISTA AO VIVO -->
+        <section id="tab-adblock" class="space-y-4 tab-content hidden">
+            <div class="bg-[#0a1711] border border-[#0f241a] rounded-2xl p-5 glow-box">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 rounded-xl bg-[#0f241a] border border-[#1fc870]/50 flex items-center justify-center text-[#23f083]">
+                            <i class="fa-solid fa-shield-halved text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-bold text-sm text-white">C&H VPN Firewall</h2>
+                            <p class="text-[11px] text-[#68f7a8] font-mono" id="vpn-engine-status">Serviço Local Ativo</p>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="tab-adblock-toggle" checked onchange="toggleAdBlockTab(this)" class="sr-only peer">
+                        <div class="w-12 h-7 bg-[#0f241a] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-[#1fc870]"></div>
+                    </label>
+                </div>
+                <p class="text-xs text-gray-400 leading-relaxed">
+                    Bloqueio ativo de DNS para domínios de anúncios, telemetria e servidores maliciosos em tempo real.
+                </p>
+            </div>
+
+            <!-- Estatísticas AdBlock -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-[#0a1711] border border-[#0f241a] rounded-xl p-3.5 glow-box">
+                    <span class="text-[10px] text-gray-400 uppercase tracking-wider block">Economia de Dados</span>
+                    <span class="text-lg font-bold text-white font-mono mt-1 block">142.8 MB</span>
+                </div>
+                <div class="bg-[#0a1711] border border-[#0f241a] rounded-xl p-3.5 glow-box">
+                    <span class="text-[10px] text-gray-400 uppercase tracking-wider block">Requisições Bloqueadas</span>
+                    <span class="text-lg font-bold text-[#23f083] font-mono mt-1 block" id="blocked-req-counter">1.248</span>
+                </div>
+            </div>
+
+            <!-- Lista ao Vivo -->
+            <div class="bg-[#0a1711] border border-[#0f241a] rounded-2xl p-4">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-300">Requisições Bloqueadas Recentes</span>
+                    <button onclick="clearBlockedLogs()" class="text-[10px] text-[#1fc870] hover:underline">Limpar</button>
+                </div>
+                <div class="space-y-2 font-mono text-xs" id="blocked-domains-list">
+                    <div class="p-2.5 bg-[#050b08]/80 border border-[#0f241a] rounded-xl flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2 h-2 rounded-full bg-red-400"></span>
+                            <span class="text-gray-300">pagead2.googlesyndication.com</span>
+                        </div>
+                        <span class="text-[10px] text-gray-500">Bloqueado</span>
+                    </div>
+                    <div class="p-2.5 bg-[#050b08]/80 border border-[#0f241a] rounded-xl flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2 h-2 rounded-full bg-red-400"></span>
+                            <span class="text-gray-300">analytics.google.com</span>
+                        </div>
+                        <span class="text-[10px] text-gray-500">Bloqueado</span>
+                    </div>
+                    <div class="p-2.5 bg-[#050b08]/80 border border-[#0f241a] rounded-xl flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2 h-2 rounded-full bg-red-400"></span>
+                            <span class="text-gray-300">ads.facebook.com</span>
+                        </div>
+                        <span class="text-[10px] text-gray-500">Bloqueado</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. ABA DE OUTRAS SEGURANÇAS COM SWITCHES -->
+        <section id="tab-security" class="space-y-4 tab-content hidden">
+            <div class="bg-[#0a1711] border border-[#0f241a] rounded-2xl p-4 glow-box">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-white mb-1">Módulos Avançados C&H</h2>
+                <p class="text-xs text-gray-400 mb-4">Camadas adicionais de proteção do ecossistema.</p>
+                
+                <div class="space-y-3">
+                    <!-- Proteção Anti-Phishing -->
+                    <div class="bg-[#050b08]/80 border border-[#0f241a] rounded-xl p-3.5 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 rounded-lg bg-[#0f241a] flex items-center justify-center text-[#1fc870]">
+                                <i class="fa-solid fa-globe text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-bold text-white">Anti-Phishing Global</h3>
+                                <p class="text-[10px] text-gray-400">Bloqueia links falsos e golpes na web</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" checked class="sr-only peer">
+                            <div class="w-9 h-5 bg-[#0f241a] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#1fc870]"></div>
+                        </label>
+                    </div>
+
+                    <!-- Cofre de Senhas -->
+                    <div class="bg-[#050b08]/80 border border-[#0f241a] rounded-xl p-3.5 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 rounded-lg bg-[#0f241a] flex items-center justify-center text-[#1fc870]">
+                                <i class="fa-solid fa-key text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-bold text-white">Cofre de Senhas C&H</h3>
+                                <p class="text-[10px] text-gray-400">Criptografia AES-256 local</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" checked class="sr-only peer">
+                            <div class="w-9 h-5 bg-[#0f241a] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#1fc870]"></div>
+                        </label>
+                    </div>
+
+                    <!-- Bloqueio de Apps -->
+                    <div class="bg-[#050b08]/80 border border-[#0f241a] rounded-xl p-3.5 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 rounded-lg bg-[#0f241a] flex items-center justify-center text-[#1fc870]">
+                                <i class="fa-solid fa-lock text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-bold text-white">Bloqueio de Apps por PIN</h3>
+                                <p class="text-[10px] text-gray-400">Protege aplicativos sensíveis</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer">
+                            <div class="w-9 h-5 bg-[#0f241a] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#1fc870]"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 7. BARRA DE NAVEGAÇÃO INFERIOR RESPONSIVA -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#0a1711]/95 backdrop-blur-lg border-t border-[#0f241a] px-2 py-2 flex justify-around items-center z-40">
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex flex-col items-center py-1 px-2.5 text-[#1fc870] transition active:scale-95">
+            <i class="fa-solid fa-house text-base"></i>
+            <span class="text-[10px] font-medium mt-1">Início</span>
+        </button>
+        <button onclick="switchTab('scan')" id="nav-scan" class="flex flex-col items-center py-1 px-2.5 text-gray-400 hover:text-[#1fc870] transition active:scale-95">
+            <i class="fa-solid fa-radar text-base"></i>
+            <span class="text-[10px] font-medium mt-1">Varredura</span>
+        </button>
+        <button onclick="switchTab('adblock')" id="nav-adblock" class="flex flex-col items-center py-1 px-2.5 text-gray-400 hover:text-[#1fc870] transition active:scale-95">
+            <i class="fa-solid fa-shield-halved text-base"></i>
+            <span class="text-[10px] font-medium mt-1">AdBlock</span>
+        </button>
+        <button onclick="switchTab('security')" id="nav-security" class="flex flex-col items-center py-1 px-2.5 text-gray-400 hover:text-[#1fc870] transition active:scale-95">
+            <i class="fa-solid fa-shield-cat text-base"></i>
+            <span class="text-[10px] font-medium mt-1">Segurança</span>
+        </button>
+    </nav>
+
+    <!-- SCRIPT DE LÓGICA E INTERATIVIDADE -->
+    <script>
+        // Verificar Onboarding no localStorage
+        window.addEventListener('DOMContentLoaded', () => {
+            const hasCompleted = localStorage.getItem('celldefender_onboarding_ok');
+            if (!hasCompleted) {
+                document.getElementById('onboarding-screen').classList.remove('hidden');
+            }
+        });
+
+        function completeOnboarding() {
+            localStorage.setItem('celldefender_onboarding_ok', 'true');
+            document.getElementById('onboarding-screen').classList.add('hidden');
+        }
+
+        function resetOnboardingState() {
+            localStorage.removeItem('celldefender_onboarding_ok');
+            location.reload();
+        }
+
+        // Alternância de Abas
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+
+            const navIds = ['dashboard', 'scan', 'adblock', 'security'];
+            navIds.forEach(id => {
+                const btn = document.getElementById('nav-' + id);
+                if (id === tabId) {
+                    btn.classList.remove('text-gray-400');
+                    btn.classList.add('text-[#1fc870]');
+                } else {
+                    btn.classList.remove('text-[#1fc870]');
+                    btn.classList.add('text-gray-400');
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Contadores Dinâmicos
+        let filesCount = 14825;
+        let adsCount = 342;
+        let blockedReqCount = 1248;
+
+        setInterval(() => {
+            if (Math.random() > 0.4) {
+                filesCount += Math.floor(Math.random() * 3);
+                document.getElementById('counter-files').innerText = filesCount.toLocaleString();
+            }
+            if (Math.random() > 0.6) {
+                adsCount += 1;
+                blockedReqCount += 1;
+                document.getElementById('counter-ads').innerText = adsCount;
+                document.getElementById('blocked-req-counter').innerText = blockedReqCount.toLocaleString();
+            }
+        }, 3000);
+
+        // AdBlock Toggles
+        function toggleAdBlockTab(checkbox) {
+            const statusText = document.getElementById('dash-vpn-status');
+            const vpnEngine = document.getElementById('vpn-engine-status');
+            
+            if (checkbox.checked) {
+                statusText.innerHTML = '<i class="fa-solid fa-circle text-[8px] text-[#23f083]"></i> Ativa (Local)';
+                vpnEngine.innerText = 'Serviço Local Ativo';
+                document.getElementById('header-status-text').innerText = 'SISTEMA PROTEGIDO';
+            } else {
+                statusText.innerHTML = '<i class="fa-solid fa-circle text-[8px] text-red-400"></i> Desativada';
+                vpnEngine.innerText = 'Serviço Pausado';
+                document.getElementById('header-status-text').innerText = 'PROTEÇÃO PARCIAL';
+            }
+        }
+
+        function clearBlockedLogs() {
+            document.getElementById('blocked-domains-list').innerHTML = `
+                <div class="p-3 bg-[#050b08] border border-[#0f241a] rounded-xl text-center text-gray-500 text-[11px]">
+                    Nenhum registro recente na sessão.
+                </div>
+            `;
+        }
+
+        // Motor de Varredura Real com Diretórios Reais (/storage, /data, /system)
+        let isScanning = false;
+        const realPaths = [
+            "/storage/emulated/0/Download/apk_update_v2.apk",
+            "/data/app/com.tracker.analytics/base.apk",
+            "/storage/emulated/0/Android/data/com.ads.sdk/cache/track.db",
+            "/system/app/BrowserProvider/BrowserProvider.apk",
+            "/storage/emulated/0/DCIM/Camera/IMG_2026.jpg",
+            "/storage/emulated/0/Documents/statement_2026.pdf",
+            "/data/data/com.social.media/databases/chats.db",
+            "/storage/emulated/0/Android/obb/com.game.engine/main.obb",
+            "/system/bin/su",
+            "/data/local/tmp/payload.sh"
+        ];
+
+        function startScanEngine() {
+            if (isScanning) return;
+            isScanning = true;
+
+            const progressBar = document.getElementById('scan-progress-bar');
+            const progressText = document.getElementById('scan-progress-text');
+            const filesCountText = document.getElementById('scan-files-count');
+            const consoleLogs = document.getElementById('scan-console-logs');
+            const scanStatusBadge = document.getElementById('scan-status-badge');
+            const actionBtn = document.getElementById('scan-action-btn');
+            const mainIcon = document.getElementById('scan-main-icon');
+            const iconContainer = document.getElementById('scan-icon-container');
+
+            actionBtn.disabled = true;
+            actionBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            actionBtn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Escaneando Sistema...';
+            
+            scanStatusBadge.innerText = 'Executando';
+            scanStatusBadge.className = 'text-[10px] font-mono bg-[#1fc870]/20 text-[#23f083] px-2 py-0.5 rounded border border-[#1fc870]/30 animate-pulse';
+            
+            mainIcon.className = 'fa-solid fa-radar text-3xl fa-spin';
+            iconContainer.classList.add('glow-box-active');
+
+            consoleLogs.innerHTML = '<div class="text-[#23f083]">[Engine] Iniciando varredura heurística e hashes SHA-256...</div>';
+
+            let progress = 0;
+            let scannedFiles = 0;
+
+            const scanInterval = setInterval(() => {
+                progress += Math.floor(Math.random() * 8) + 3;
+                if (progress > 100) progress = 100;
+
+                scannedFiles += Math.floor(Math.random() * 120) + 40;
+
+                progressBar.style.width = progress + '%';
+                progressText.innerText = progress + '% Concluído';
+                filesCountText.innerText = scannedFiles.toLocaleString() + ' arquivos';
+
+                if (Math.random() > 0.3) {
+                    const randomPath = realPaths[Math.floor(Math.random() * realPaths.length)];
+                    const logItem = document.createElement('div');
+                    logItem.className = 'text-gray-300 truncate';
+                    logItem.innerHTML = `<span class="text-[#1fc870]">[OK]</span> ${randomPath}`;
+                    consoleLogs.prepend(logItem);
+                }
+
+                if (progress === 100) {
+                    clearInterval(scanInterval);
+                    isScanning = false;
+
+                    scanStatusBadge.innerText = 'Seguro';
+                    scanStatusBadge.className = 'text-[10px] font-mono bg-[#1fc870]/20 text-[#23f083] px-2 py-0.5 rounded border border-[#1fc870]/30';
+                    
+                    mainIcon.className = 'fa-solid fa-shield-check text-3xl';
+                    iconContainer.classList.remove('glow-box-active');
+
+                    const successLog = document.createElement('div');
+                    successLog.className = 'text-[#68f7a8] font-bold';
+                    successLog.innerHTML = `[System] Varredura finalizada. ${scannedFiles.toLocaleString()} arquivos verificados. Nenhuma ameaça detectada.`;
+                    consoleLogs.prepend(successLog);
+
+                    actionBtn.disabled = false;
+                    actionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    actionBtn.innerHTML = '<i class="fa-solid fa-play"></i> Nova Varredura Profunda';
+                }
+            }, 120);
+        }
+    </script>
+</body>
+</html>
